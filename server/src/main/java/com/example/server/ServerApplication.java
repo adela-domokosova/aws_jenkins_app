@@ -1,13 +1,13 @@
-package com.example.aws_jenkins_app;
+package com.example.server;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class AwsJenkinsAppApplication {
+public class ServerApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(AwsJenkinsAppApplication.class, args);
+        SpringApplication.run(ServerApplication.class, args);
     }
 
 }

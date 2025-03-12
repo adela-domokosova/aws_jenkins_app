@@ -1,10 +1,10 @@
-package com.example.aws_jenkins_app;
+package com.example.client;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class AwsJenkinsAppApplicationTests {
+class ClientApplicationTests {
 
     @Test
     void contextLoads() {
