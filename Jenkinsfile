@@ -16,7 +16,7 @@ pipeline {
         stage('Build Server') {
                     steps {
                         dir('server') {
-                            sh '../../mvnw clean package'
+                            sh '../../mvn clean package'
                         }
                     }
                 }
@@ -24,7 +24,7 @@ pipeline {
                 stage('Build Client') {
                     steps {
                         dir('client') {
-                            sh '../../mvnw clean package'
+                            sh '../../mvn clean package'
                         }
                     }
                 }
