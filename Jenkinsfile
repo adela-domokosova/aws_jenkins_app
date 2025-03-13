@@ -16,6 +16,7 @@ pipeline {
         stage('Build Server') {
                     steps {
                         dir('server') {
+                            sh 'chmod +x ../mvnw'
                             sh '../mvnw clean package'
                         }
                     }
@@ -24,6 +25,7 @@ pipeline {
                 stage('Build Client') {
                     steps {
                         dir('client') {
+                            sh 'chmod +x ../mvnw'
                             sh '../mvnw clean package'
                         }
                     }
