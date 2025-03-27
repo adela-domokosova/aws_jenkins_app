@@ -18,20 +18,23 @@ pipeline {
         stage('Build Server') {
                     steps {
                         dir('server') {
-                                    echo '📂 Pracovní adresář:'
-                                    sh 'pwd'
-
-                                    echo '📜 Obsah adresáře před změnami:'
-                                    sh 'ls -l'
-
                                     echo '🔑 Nastavuji práva pro mvnw...'
                                     sh 'chmod +x ../mvnw'
 
-                                    echo '📜 Kontrola práv souboru mvnw:'
-                                    sh 'ls -l ../mvnw'
-
                                     echo '🧹 Odstraňuji Maven wrapper cache...'
                                     sh 'rm -rf ~/.m2/wrapper/'
+
+                                    echo '📌 Ověřuji volné místo na disku...'
+                                    sh 'df -h'
+
+                                    echo '📌 Ověřuji paměť systému...'
+                                    sh 'free -m'
+
+                                    echo '📌 Čistím Maven cache a repositář...'
+                                    sh 'rm -rf ~/.m2/repository/'
+
+                                    echo '🔧 Nastavuji práva pro složku target/...'
+                                    sh 'mkdir -p target && chmod -R 777 target'
 
                                     echo '🚀 Spouštím Maven build bez testů...'
                                     sh '../mvnw clean package -B -X -DskipTests'
