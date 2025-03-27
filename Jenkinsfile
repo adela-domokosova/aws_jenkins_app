@@ -37,7 +37,7 @@ pipeline {
                                     sh 'mkdir -p target && chmod -R 777 target'
 
                                     echo '🚀 Spouštím Maven build bez testů...'
-                                    sh 'mvn clean package -B -DskipTests'
+                                    sh 'mvn clean -B -DskipTests'
 
                                     echo '📜 Obsah adresáře po buildu:'
                                     sh 'ls -l target/'
