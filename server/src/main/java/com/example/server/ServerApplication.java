@@ -1,28 +1,36 @@
 package com.example.server;
 
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-import org.springframework.web.socket.config.annotation.EnableWebSocket;
-import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
-import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 
-@SpringBootApplication
-@EnableWebSocket
-public class ServerApplication implements WebSocketConfigurer {
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
 
+@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
+public class ServerApplication implements CommandLineRunner {
     public static void main(String[] args) {
         SpringApplication.run(ServerApplication.class, args);
     }
 
     @Override
-    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(gameHandler(), "/game").setAllowedOrigins("*");
-    }
+    public void run(String... args) throws Exception {
+        try (ServerSocket serverSocket = new ServerSocket(5000)) {
+            System.out.println("Server is running on port 5000...");
+            while (true) {
+                Socket clientSocket = serverSocket.accept();
+                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
 
-    @Bean
-    public GameWebSocketHandler gameHandler() {
-        return new GameWebSocketHandler();
+                String receivedMessage = in.readLine();
+                System.out.println("Received: " + receivedMessage);
+                out.println("Server received: " + receivedMessage);
+            }
+        }
     }
 }
-

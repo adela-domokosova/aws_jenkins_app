@@ -1,121 +1,33 @@
 package com.example.client;
 
-import javafx.application.Application;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-import org.java_websocket.client.WebSocketClient;
-import org.java_websocket.handshake.ServerHandshake;
 
-import java.net.URI;
-public class ClientApplication extends Application {
-    private WebSocketClient webSocketClient;
-    private Label statusLabel;
-    private TextField usernameField;
-    private Button loginButton;
-    private Button logoutButton;
-    private VBox gameControls;
-    private String username;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.Socket;
+
+@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
+public class ClientApplication implements CommandLineRunner {
+    public static void main(String[] args) {
+        SpringApplication.run(ClientApplication.class, args);
+    }
 
     @Override
-    public void start(Stage primaryStage) {
-        statusLabel = new Label("Enter username to connect");
-        usernameField = new TextField();
-        usernameField.setPromptText("Username");
-        loginButton = new Button("Login");
-        logoutButton = new Button("Logout");
-        logoutButton.setVisible(false);
+    public void run(String... args) throws Exception {
+        try (Socket socket = new Socket("localhost", 5000)) {
+            PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-        gameControls = new VBox(10);
-        gameControls.setAlignment(Pos.CENTER);
-        gameControls.setVisible(false);
-
-        Button rockButton = new Button("Rock");
-        Button paperButton = new Button("Paper");
-        Button scissorsButton = new Button("Scissors");
-
-        rockButton.setOnAction(e -> sendChoice("rock"));
-        paperButton.setOnAction(e -> sendChoice("paper"));
-        scissorsButton.setOnAction(e -> sendChoice("scissors"));
-
-        gameControls.getChildren().addAll(statusLabel, rockButton, paperButton, scissorsButton, logoutButton);
-
-        loginButton.setOnAction(e -> {
-            username = usernameField.getText().trim();
-            if (username.isEmpty()) {
-                statusLabel.setText("Username cannot be empty!");
-                return;
-            }
-            connectToServer();
-        });
-
-        logoutButton.setOnAction(e -> disconnectFromServer());
-
-        VBox loginBox = new VBox(10, statusLabel, usernameField, loginButton);
-        loginBox.setAlignment(Pos.CENTER);
-
-        VBox root = new VBox(20, loginBox, gameControls);
-        root.setAlignment(Pos.CENTER);
-
-        primaryStage.setTitle("Rock-Paper-Scissors Client");
-        primaryStage.setScene(new Scene(root, 300, 250));
-        primaryStage.show();
-    }
-
-    private void connectToServer() {
-        try {
-            webSocketClient = new WebSocketClient(new URI("ws://localhost:8080/game")) {
-                @Override
-                public void onOpen(ServerHandshake handshake) {
-                    webSocketClient.send("LOGIN:" + username);
-                    statusLabel.setText("Connected as " + username + ". Waiting for opponent...");
-                    gameControls.setVisible(true);
-                    logoutButton.setVisible(true);
-                }
-
-                @Override
-                public void onMessage(String message) {
-                    statusLabel.setText("Server: " + message);
-                }
-
-                @Override
-                public void onClose(int code, String reason, boolean remote) {
-                    statusLabel.setText("Connection closed: " + reason);
-                    gameControls.setVisible(false);
-                    logoutButton.setVisible(false);
-                }
-
-                @Override
-                public void onError(Exception ex) {
-                    statusLabel.setText("Error: " + ex.getMessage());
-                }
-            };
-            webSocketClient.connect();
-        } catch (Exception e) {
-            statusLabel.setText("Failed to connect to server.");
+            out.println("Hello from client");
+            String response = in.readLine();
+            System.out.println("Response from server: " + response);
         }
-    }
-
-    private void sendChoice(String choice) {
-        if (webSocketClient != null && webSocketClient.isOpen()) {
-            webSocketClient.send("MOVE:" + choice);
-            statusLabel.setText("You chose: " + choice);
-        }
-    }
-
-    private void disconnectFromServer() {
-        if (webSocketClient != null && webSocketClient.isOpen()) {
-            webSocketClient.send("LOGOUT:" + username);
-            webSocketClient.close();
-        }
-        statusLabel.setText("Disconnected");
-        gameControls.setVisible(false);
-        logoutButton.setVisible(false);
-    }
-
-    public static void main(String[] args) {
-        launch(args);
     }
 }
