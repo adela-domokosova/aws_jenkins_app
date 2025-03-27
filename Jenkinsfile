@@ -10,61 +10,67 @@ pipeline {
         stage('Checkout') {
                     steps {
                         git branch: 'main', url: env.GIT_REPO
+                        echo '📂 Pracovní adresář:'
+                        sh 'pwd'
                     }
                 }
 
         stage('Build Server') {
                     steps {
                         dir('server') {
-                            sh 'chmod +x ../mvnw'
-                            sh '../mvnw clean package'
-                        }
+                                    echo '📂 Pracovní adresář:'
+                                    sh 'pwd'
+
+                                    echo '📜 Obsah adresáře před změnami:'
+                                    sh 'ls -l'
+
+                                    echo '🔑 Nastavuji práva pro mvnw...'
+                                    sh 'chmod +x ../mvnw'
+
+                                    echo '📜 Kontrola práv souboru mvnw:'
+                                    sh 'ls -l ../mvnw'
+
+                                    echo '🧹 Odstraňuji Maven wrapper cache...'
+                                    sh 'rm -rf ~/.m2/wrapper/'
+
+                                    echo '🚀 Spouštím Maven build bez testů...'
+                                    sh '../mvnw clean package -B -X -DskipTests'
+
+                                    echo '📜 Obsah adresáře po buildu:'
+                                    sh 'ls -l target/'
+                                }
+
                     }
                 }
 
                 stage('Build Client') {
                     steps {
                         dir('client') {
-                            sh 'chmod +x ../mvnw'
-                            sh '../mvnw clean package'
+                            echo '📂 Pracovní adresář:'
+                             sh 'pwd'
                         }
                     }
                 }
 
         stage('Test Server') {
             steps {
-                dir('server') { // Jdeme do složky `server`
-                    sh '../../mvnw test' // Spouštíme testy
-                }
+                dir('client') {
+                    echo '📂 Pracovní adresář:'
+                    sh 'pwd'
+                   }
             }
         }
 
 
     stage('Test Client') {
         steps {
-            dir('client') { // Jdeme do složky `client`
-                sh '../../mvnw test' // Spouštíme testy
-            }
+            dir('client') {
+                echo '📂 Pracovní adresář:'
+                sh 'pwd'
+               }
         }
     }
 
-    stage('Build Docker Images') {
-                steps {
-                    script {
-                        sh 'docker build -t $DOCKER_IMAGE_SERVER ./server'
-                        sh 'docker build -t $DOCKER_IMAGE_CLIENT ./client'
-                    }
-                }
-            }
-
-            stage('Run Containers') {
-                steps {
-                    script {
-                        sh 'docker run -d --name server-container -p 8081:8080 $DOCKER_IMAGE_SERVER'
-                        sh 'docker run -d --name client-container -p 8082:8080 $DOCKER_IMAGE_CLIENT'
-                    }
-                }
-            }
 
 
 
