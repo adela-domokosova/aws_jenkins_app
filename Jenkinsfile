@@ -21,26 +21,12 @@ pipeline {
                                     echo '🔑 Nastavuji práva pro mvnw...'
                                     sh 'chmod +x ../mvnw'
 
-                                    echo '🧹 Odstraňuji Maven wrapper cache...'
-                                    sh 'rm -rf ~/.m2/wrapper/'
-
-                                    echo '📌 Ověřuji volné místo na disku...'
-                                    sh 'df -h'
-
-                                    echo '📌 Ověřuji paměť systému...'
-                                    sh 'free -m'
-
-                                    echo '📌 Čistím Maven cache a repositář...'
-                                    sh 'rm -rf ~/.m2/repository/'
-
                                     echo '🔧 Nastavuji práva pro složku target/...'
                                     sh 'mkdir -p target && chmod -R 777 target'
 
                                     echo '🚀 Spouštím Maven build bez testů...'
-                                    sh 'mvn clean -B -DskipTests'
+                                    sh 'mvn clean package -B -DskipTests'
 
-                                    echo '📜 Obsah adresáře po buildu:'
-                                    sh 'ls -l target/'
                                 }
 
                     }
