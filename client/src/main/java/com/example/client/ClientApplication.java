@@ -21,7 +21,7 @@ public class ClientApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        try (Socket socket = new Socket("localhost", 8081)) {
+        try (Socket socket = new Socket("localhost", 5000)) {
             PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
