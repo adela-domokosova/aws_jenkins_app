@@ -47,7 +47,7 @@ pipeline {
                      steps {
                          script {
                              sh 'docker build -t $DOCKER_IMAGE_SERVER -f ./server/Dockerfile ./server'
-                             sh 'docker build -t $DOCKER_IMAGE_CLIENT -f ./server/Dockerfile ./client'
+                             sh 'docker build -t $DOCKER_IMAGE_CLIENT -f ./client/Dockerfile ./client'
                          }
                      }
                  }
