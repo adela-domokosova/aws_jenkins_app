@@ -55,8 +55,8 @@ pipeline {
                  stage('Run Containers') {
                      steps {
                          script {
-                             sh 'docker run -d --name server-container -p 8080:5000 $DOCKER_IMAGE_SERVER'
-                             sh 'docker run -d --name client-container -p 8081:5001 $DOCKER_IMAGE_CLIENT'
+                             sh 'docker run -d --name server-container -p 8081:8081 $DOCKER_IMAGE_SERVER'
+                             sh 'docker run -d --name client-container -p 8080:8080 $DOCKER_IMAGE_CLIENT'
                          }
                      }
                  }
