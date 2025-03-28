@@ -20,7 +20,7 @@ public class ServerApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        try (ServerSocket serverSocket = new ServerSocket(8081)) {
+        try (ServerSocket serverSocket = new ServerSocket(5000)) {
             System.out.println("Server is running on port 5000...");
             while (true) {
                 Socket clientSocket = serverSocket.accept();
