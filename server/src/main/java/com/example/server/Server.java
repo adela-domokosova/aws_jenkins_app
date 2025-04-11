@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import static com.example.server.ClientHandler.clientSet;
+
 public class Server {
     private ServerSocket serverSocket;
 
@@ -14,6 +16,7 @@ public class Server {
     public void serverStart(){
         try{
             while(!serverSocket.isClosed()){
+                System.out.println(clientSet);
                 //when client accepts Socket object is returned
                 Socket socket = serverSocket.accept();
                 System.out.println("a client connected");

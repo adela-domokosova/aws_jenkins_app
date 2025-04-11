@@ -7,27 +7,26 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.io.*;
+import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Scanner;
 
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
-public class ClientApplication implements CommandLineRunner {
+public class ClientApplication {
     public static void main(String[] args) {
-        SpringApplication.run(ClientApplication.class, args);
+    try {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("enter your user name: ");
+        String name = scanner.nextLine();
+        System.out.println("start");
+        Socket socket = new Socket("localhost", 1234);
+        Client client = new Client(socket, name);
+        client.listenForMessage();
+        client.sendMessage();
+    }catch (IOException e){
+
+    }
     }
 
-    @Override
-    public void run(String... args) throws Exception {
-        try (Socket socket = new Socket("localhost", 5000)) {
-            PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
-            out.println("Hello from client");
-            String response = in.readLine();
-            System.out.println("Response from server: " + response);
-        }
-    }
 }

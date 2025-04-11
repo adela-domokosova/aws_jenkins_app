@@ -22,9 +22,10 @@ public class ClientHandler implements Runnable {
             this.name = bufferedReader.readLine();
             clientSet.add(this);
             //notify others, user has just connected
-            broadcastMessage("Server: " + this.name + " has just joined the chat");
+            broadcastMessage("Server: " + name + " has just joined the chat");
 
         } catch (IOException e){
+            System.out.println("ops constructor");
             closeEverything(socket, bufferedWriter, bufferedReader);
         }
     }
@@ -72,6 +73,7 @@ public class ClientHandler implements Runnable {
             try {
                 //blocking operation -> čeká na daném vlákně
                 message = bufferedReader.readLine();
+                System.out.println(message);
                 broadcastMessage(message);
             } catch (IOException e) {
                 try {
