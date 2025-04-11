@@ -14,7 +14,7 @@ public class ClientHandler implements Runnable {
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
 
-    public ClientHandler(Socket socket) {
+    public ClientHandler(Socket socket) throws IOException {
         try{
             this.socket = socket;
             this.bufferedWriter = new BufferedWriter( new OutputStreamWriter(socket.getOutputStream()));
@@ -74,7 +74,11 @@ public class ClientHandler implements Runnable {
                 message = bufferedReader.readLine();
                 broadcastMessage(message);
             } catch (IOException e) {
-                closeEverything(socket, bufferedWriter, bufferedReader);
+                try {
+                    closeEverything(socket, bufferedWriter, bufferedReader);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
                 //break out of while loop
                 break;
             }
